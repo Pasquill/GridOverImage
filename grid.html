@@ -82,6 +82,14 @@
 
 	<script>
 	window.onload = function() {
+		/* check possibility to drop an image into browser, instead of typing its name */
+		if(window.FileReader) {
+			var div = document.createElement("div");
+			div.setAttribute("id", "dropArea");
+			div.style.width = "100%";
+			div.style.height = "40px";
+		}
+
 		var form = document.getElementsByTagName("form")[0];
 		var filename = form.filename;
 		var gridScale = form.gridScale;
