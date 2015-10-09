@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Grid</title>
+	<style>
+		body {
+			background-color: #269;
+		}
+		#settings {
+			float: left;
+			width: auto;
+			height: 100%;
+			padding: 25px;
+			background-color: #269;
+			color: #FFF;
+		}
+
+
+		#container {
+			float: left;
+			width: auto;
+			height: auto;
+			position: relative;
+		}
+		img {
+			padding: 10px;
+		}
+		#grid {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+		}
+		#grid.light {
+			background-image: linear-gradient(white 2px, transparent 2px),
+			linear-gradient(90deg, white 2px, transparent 2px),
+			linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+			background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+		}
+		#grid.dark {
+			background-image: linear-gradient(black 2px, transparent 2px),
+			linear-gradient(90deg, black 2px, transparent 2px),
+			linear-gradient(rgba(0,0,0,.3) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0,0,0,.3) 1px, transparent 1px);
+			background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+		}
+		#grid.gray {
+			background-image: linear-gradient(gray 2px, transparent 2px),
+			linear-gradient(90deg, gray 2px, transparent 2px),
+			linear-gradient(rgba(156,156,156,.3) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(156,156,156,.3) 1px, transparent 1px);
+			background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+		}
+	</style>
+</head>
+<body>
+	<div id="settings">
+		<form>
+			Название картинки с расширением: <input type="text" name="filename" placeholder="Название картинки"><br><br>
+			Масштаб сетки: <input type="range" name="gridScale" value="100" min="10" max="200" step="5">
+			<input type="text" name="textGridScale" placeholder="100" readonly><br><br>
+			Масштаб картинки, %: <input type="text" name="imgScale" placeholder="100"><br><br>
+			Цвет сетки: 
+			<input type="radio" name="gridColor" id="chooseLight" value="light" checked>Светлый
+			<input type="radio" name="gridColor" id="chooseDark" value="dark">Темный
+			<input type="radio" name="gridColor" id="chooseGray" value="gray">Серый
+			<br><br>
+			<button>По умолчанию</button>
+		</form>
+	</div>
+
+	<div id="container">
+		<img src="1.gif">
+		<div id="grid" class="light"></div>
+	</div>
+
+	<script>
+	window.onload = function() {
+		var form = document.getElementsByTagName("form")[0];
+		var filename = form.filename;
+		var gridScale = form.gridScale;
+		var textGridScale = form.textGridScale;
+		var imgScale = form.imgScale;
+		var chooseLight = document.getElementById("chooseLight");
+		var chooseDark = document.getElementById("chooseDark");
+		var chooseGray = document.getElementById("chooseGray");
+		var button = form.getElementsByTagName("button")[0];
+
+		var container = document.getElementById("container");
+		var img = document.getElementsByTagName("img")[0];
+		var grid = document.getElementById("grid");
+
+		function changeFileName() {
+			img.setAttribute("src", filename.value);
+		}
+
+		function changeGridScale() {
+			var scale = gridScale.value;
+			var scaleDiv5 = Math.floor(scale / 5);
+			textGridScale.value = scale;
+			grid.style.backgroundSize = scale + "px " + scale + "px, " + scale + "px " + scale + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px";
+		}
+
+		function changeImgScale() {
+			img.style.width = img.style.height = imgScale.value + "%";
+			grid.style.width = img.clientWidth + "px";
+			grid.style.height = img.clientHeight + "px";
+		}
+
+		function setGridLight() {
+			grid.className = "light";
+		}
+		function setGridDark() {
+			grid.className = "dark";
+		}
+		function setGridGray() {
+			grid.className = "gray";
+		}
+
+		function setDefault() {
+			filename.value = "1.gif";
+			gridScale.value = 100;
+			imgScale.value = "100";
+			chooseLight.checked = true;
+		}
+
+		filename.addEventListener("input", changeFileName);
+
+		gridScale.addEventListener("input", changeGridScale);
+		gridScale.addEventListener("change", changeGridScale);
+
+		imgScale.addEventListener("input", changeImgScale);
+
+		chooseLight.addEventListener("click", setGridLight);
+		chooseDark.addEventListener("click", setGridDark);
+		chooseGray.addEventListener("click", setGridGray);
+
+		button.addEventListener("click", setDefault);
+	}
+	</script>
+</body>
+</html>
