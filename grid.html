@@ -27,6 +27,11 @@
 			text-align: center;
 			vertical-align: middle;
 		}
+		.readonly {
+			width: 35px;
+			color: #777;
+			text-align: center;
+		}
 
 
 		#container {
@@ -74,10 +79,11 @@
 <body>
 	<div id="settings">
 		<form>
-			Image name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
+			Img name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
 			Grid scale: <input type="range" name="gridScale" value="100" min="10" max="200" step="5">
-			<input type="text" name="textGridScale" placeholder="100" readonly><br><br>
-			Image scale, %: <input type="text" name="imgScale" placeholder="100"><br><br>
+			<input type="text" name="textGridScale" class="readonly" placeholder="100" readonly><br><br>
+			Img scale, %: <input type="range" name="imgScale" min="1" max="200">
+			<input type="text" name="textImgScale" class="readonly" placeholder="100" readonly><br><br>
 			Grid color: 
 			<input type="radio" name="gridColor" id="chooseLight" value="light" checked>Light
 			<input type="radio" name="gridColor" id="chooseDark" value="dark">Dark
@@ -100,6 +106,7 @@
 		var gridScale = form.gridScale;
 		var textGridScale = form.textGridScale;
 		var imgScale = form.imgScale;
+		var textImgScale = form.textImgScale;
 		var chooseLight = document.getElementById("chooseLight");
 		var chooseDark = document.getElementById("chooseDark");
 		var chooseGray = document.getElementById("chooseGray");
@@ -182,7 +189,9 @@
 		}
 
 		function changeImgScale() {
-			img.style.width = img.style.height = imgScale.value + "%";
+			var scale = imgScale.value;
+			textImgScale.value = scale;
+			img.style.width = img.style.height = scale + "%";
 			grid.style.width = img.clientWidth + "px";
 			grid.style.height = img.clientHeight + "px";
 		}
@@ -200,7 +209,7 @@
 		function setDefault() {
 			filename.value = "1.gif";
 			gridScale.value = 100;
-			imgScale.value = "100";
+			imgScale.value = 100;
 			chooseLight.checked = true;
 		}
 
