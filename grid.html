@@ -17,13 +17,13 @@
 		}
 		#dropArea {
 			width: 90%;
-			height: 40px;
+			height: 50px;
 			margin-bottom: 15px;
 			background: #FFF;
 			border: 1px solid #878787;
 			color: #269;
 			font-size: 16px;
-			line-height: 40px;
+			line-height: 50px;
 			text-align: center;
 			vertical-align: middle;
 		}
@@ -100,7 +100,6 @@
 
 	<script>
 	window.onload = function() {
-		var div; // case FileReader exists
 		var form = document.getElementsByTagName("form")[0];
 		var filename = form.filename;
 		var gridScale = form.gridScale;
@@ -116,66 +115,47 @@
 		var img = document.getElementsByTagName("img")[0];
 		var grid = document.getElementById("grid");
 
-		/* check possibility to drop an image into browser, instead of typing its name */
+		/* DnD the image */
 		if(window.FileReader) {
-			div = document.createElement("div");
-			div.setAttribute("id", "dropArea");
-			var txt = document.createTextNode(">> Drag the image here <<");
-			div.appendChild(txt);
-			document.getElementById("settings").insertBefore(div, form);
-
-			function cancel(e) {
-				var e = e || window.event;
-				e.preventDefault();
-				return false;
-			}
-
-			/***/
-			Function.prototype.bindToEventHandler = function bindToEventHandler() {
-				  var handler = this;
-				  var boundParameters = Array.prototype.slice.call(arguments);
-				  //create closure
-				  return function(e) {
-				      e = e || window.event; // get window.event if e argument missing (in IE)   
-				      boundParameters.unshift(e);
-				      handler.apply(this, boundParameters);
-				 }
-			};
-			/***/
-			
-			function processImage() {
-				var e = e || window.event;
-				e.preventDefault();
-				var dt = e,dataTransfer;
-				var file = dt.files;
-				var reader = new FileReader();
-				//
-				//reader.readAsDataURL(file);
-				/***/
-				reader.addEventListener('loadend', function(e, file) {
-				    var bin           = this.result; 
-				    //var newFile       = div;
-				    div.innerHTML = 'Loaded : '+file.name+' size '+file.size+' B';
-				    //list.appendChild(newFile);  
-				    /*var fileNumber = list.getElementsByTagName('div').length;
-				    status.innerHTML = fileNumber < files.length 
-				                     ? 'Loaded 100% of file '+fileNumber+' of '+files.length+'...' 
-				                     : 'Done loading. processed '+fileNumber+' files.';
-					*/
-				    var img = document.createElement("img"); 
-				    img.file = file;   
-				    img.src = bin;
-				    div.appendChild(img);
-				}.bindToEventHandler(file));
-				/***/
-
-				return false;
-			}
-
-			div.addEventListener("dragover", cancel);
-			div.addEventListener("dragenter", cancel);
-			div.addEventListener("drop", processImage);
+		// create drop area
+		var div = document.createElement("div");
+		div.setAttribute("id", "dropArea");
+		var txt = document.createTextNode(">> Drag the image here <<");
+		div.appendChild(txt);
+		document.getElementById("settings").insertBefore(div, form);
+		// remove "input file name manually" section
+		form.removeChild(form.firstChild);
+		form.removeChild(form.firstChild);
+		form.removeChild(form.firstChild);
+		form.removeChild(form.firstChild);
+		console.log(form.firstChild);
+		// disable defaults funtion
+		function cancel(e) {
+			var e = e || window.event;
+			e.preventDefault();
+			return false;
 		}
+		function processImage(e) {
+			var e = e || window.event;
+			e.stopPropagation();
+			e.preventDefault();
+			var dt = e.dataTransfer;
+			var file = dt.files[0];
+			
+			var reader = new FileReader();
+			reader.onloadend = function() {
+				div.innerHTML = file.name;
+				img.setAttribute("src", reader.result);
+			}
+			if(file) {
+				reader.readAsDataURL(file);
+			} 
+		}
+		div.addEventListener("dragenter", cancel, false);
+		div.addEventListener("dragover", cancel, false);
+		div.addEventListener("drop", processImage, false);
+		}
+		/* END - DnD the image */
 
 		function changeFileName() {
 			img.setAttribute("src", filename.value);
