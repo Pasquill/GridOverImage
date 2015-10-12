@@ -117,43 +117,42 @@
 
 		/* DnD the image */
 		if(window.FileReader) {
-		// create drop area
-		var div = document.createElement("div");
-		div.setAttribute("id", "dropArea");
-		var txt = document.createTextNode(">> Drag the image here <<");
-		div.appendChild(txt);
-		document.getElementById("settings").insertBefore(div, form);
-		// remove "input file name manually" section
-		form.removeChild(form.firstChild);
-		form.removeChild(form.firstChild);
-		form.removeChild(form.firstChild);
-		form.removeChild(form.firstChild);
-		console.log(form.firstChild);
-		// disable defaults funtion
-		function cancel(e) {
-			var e = e || window.event;
-			e.preventDefault();
-			return false;
-		}
-		function processImage(e) {
-			var e = e || window.event;
-			e.stopPropagation();
-			e.preventDefault();
-			var dt = e.dataTransfer;
-			var file = dt.files[0];
-			
-			var reader = new FileReader();
-			reader.onloadend = function() {
-				div.innerHTML = file.name;
-				img.setAttribute("src", reader.result);
+			// create drop area
+			var div = document.createElement("div");
+			div.setAttribute("id", "dropArea");
+			var txt = document.createTextNode(">> Drag the image here <<");
+			div.appendChild(txt);
+			document.getElementById("settings").insertBefore(div, form);
+			// remove "input file name manually" section
+			var counter = 0;
+			do { form.removeChild(form.firstChild); counter++; } while(counter < 4);
+			// disable defaults funtion
+			function cancel(e) {
+				var e = e || window.event;
+				e.preventDefault();
+				return false;
 			}
-			if(file) {
-				reader.readAsDataURL(file);
-			} 
-		}
-		div.addEventListener("dragenter", cancel, false);
-		div.addEventListener("dragover", cancel, false);
-		div.addEventListener("drop", processImage, false);
+			function processImage(e) {
+				var e = e || window.event;
+				e.stopPropagation();
+				e.preventDefault();
+				var dt = e.dataTransfer;
+				var file = dt.files[0];
+				
+				var reader = new FileReader();
+				reader.onloadend = function() {
+					div.innerHTML = file.name;
+					img.setAttribute("src", reader.result);
+				}
+				if(file) {
+					reader.readAsDataURL(file);
+				}
+				// set grid size the same as new img
+				imgScale.click();
+			}
+			div.addEventListener("dragenter", cancel, false);
+			div.addEventListener("dragover", cancel, false);
+			div.addEventListener("drop", processImage, false);
 		}
 		/* END - DnD the image */
 
@@ -174,24 +173,21 @@
 			img.style.width = img.style.height = scale + "%";
 			grid.style.width = img.clientWidth + "px";
 			grid.style.height = img.clientHeight + "px";
+			console.log(img.clientHeight);
 		}
 
-		function setGridLight() {
-			grid.className = "light";
-		}
-		function setGridDark() {
-			grid.className = "dark";
-		}
-		function setGridGray() {
-			grid.className = "gray";
+		function setGridColor(e) {
+			var target = e && e.target || window.event.srcElement;
+ 			grid.className = target.value;
 		}
 
 		function setDefault() {
-			filename.value = "1.gif";
 			gridScale.value = 100;
 			imgScale.value = 100;
 			chooseLight.checked = true;
 		}
+		// in case update page was run
+		setDefault();
 
 		filename.addEventListener("input", changeFileName);
 
@@ -200,9 +196,9 @@
 
 		imgScale.addEventListener("input", changeImgScale);
 
-		chooseLight.addEventListener("click", setGridLight);
-		chooseDark.addEventListener("click", setGridDark);
-		chooseGray.addEventListener("click", setGridGray);
+		chooseLight.addEventListener("click", setGridColor);
+		chooseDark.addEventListener("click", setGridColor);
+		chooseGray.addEventListener("click", setGridColor);
 
 		button.addEventListener("click", setDefault);
 	}
