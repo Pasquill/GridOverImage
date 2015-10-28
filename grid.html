@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Grid</title>
+	<title>Grid v1.0</title>
 	<style>
 		body {
 			background-color: #269;
@@ -51,28 +51,34 @@
 			left: 0;
 		}
 		#grid.light {
-			background-image: linear-gradient(white 2px, transparent 2px),
+			/*background-image: linear-gradient(white 2px, transparent 2px),
 			linear-gradient(90deg, white 2px, transparent 2px),
 			linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
 			linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
 			background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
-			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;*/
+			background-image: linear-gradient(white 2px, transparent 2px),
+			linear-gradient(90deg, white 2px, transparent 2px),
+			linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 		}
 		#grid.dark {
 			background-image: linear-gradient(black 2px, transparent 2px),
 			linear-gradient(90deg, black 2px, transparent 2px),
 			linear-gradient(rgba(0,0,0,.3) 1px, transparent 1px),
 			linear-gradient(90deg, rgba(0,0,0,.3) 1px, transparent 1px);
-			background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
-			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 		}
 		#grid.gray {
 			background-image: linear-gradient(gray 2px, transparent 2px),
 			linear-gradient(90deg, gray 2px, transparent 2px),
 			linear-gradient(rgba(156,156,156,.3) 1px, transparent 1px),
 			linear-gradient(90deg, rgba(156,156,156,.3) 1px, transparent 1px);
-			background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
-			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 		}
 	</style>
 </head>
@@ -84,6 +90,8 @@
 			<input type="text" name="textGridScale" class="readonly" placeholder="100" readonly><br><br>
 			Img scale, %: <input type="range" name="imgScale" min="1" max="200">
 			<input type="text" name="textImgScale" class="readonly" placeholder="100" readonly><br><br>
+			Grid & Img scale: <input type="range" name="gridImgScale" min="1" max="200">
+			<input type="text" name="textGridImgScale" class="readonly" placeholder="100" readonly><br><br>
 			Grid color: 
 			<input type="radio" name="gridColor" id="chooseLight" value="light" checked>Light
 			<input type="radio" name="gridColor" id="chooseDark" value="dark">Dark
@@ -106,6 +114,8 @@
 		var textGridScale = form.textGridScale;
 		var imgScale = form.imgScale;
 		var textImgScale = form.textImgScale;
+		var gridImgScale = form.gridImgScale;
+		var textGridImgScale = form.textGridImgScale;
 		var chooseLight = document.getElementById("chooseLight");
 		var chooseDark = document.getElementById("chooseDark");
 		var chooseGray = document.getElementById("chooseGray");
@@ -162,9 +172,9 @@
 
 		function changeGridScale() {
 			var scale = gridScale.value;
-			var scaleDiv5 = Math.floor(scale / 5);
+			var scaleDiv5 = Math.floor(scale / 10);
 			textGridScale.value = scale;
-			grid.style.backgroundSize = scale + "px " + scale + "px, " + scale + "px " + scale + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px";
+			grid.style.backgroundSize = scale + "px " + scale + "px, " + scale + "px " + scale + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px";
 		}
 
 		function changeImgScale() {
@@ -173,7 +183,14 @@
 			img.style.width = img.style.height = scale + "%";
 			grid.style.width = img.clientWidth + "px";
 			grid.style.height = img.clientHeight + "px";
-			console.log(img.clientHeight);
+		}
+
+		function launchGridImgScale() {
+			var scale = gridImgScale.value;
+			textGridImgScale.value = scale;
+			gridScale.value = imgScale.value = textGridScale.value = textImgScale.value = scale;
+			changeGridScale();
+			changeImgScale()
 		}
 
 		function setGridColor(e) {
@@ -184,6 +201,7 @@
 		function setDefault() {
 			gridScale.value = 100;
 			imgScale.value = 100;
+			gridImgScale.value = 100;
 			chooseLight.checked = true;
 		}
 		// in case update page was run
@@ -195,6 +213,8 @@
 		gridScale.addEventListener("change", changeGridScale);
 
 		imgScale.addEventListener("input", changeImgScale);
+
+		gridImgScale.addEventListener("change", launchGridImgScale);
 
 		chooseLight.addEventListener("click", setGridColor);
 		chooseDark.addEventListener("click", setGridColor);
