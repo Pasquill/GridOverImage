@@ -265,6 +265,8 @@
 			form.imgPos.value = form.textImgPos.value = value;
 			img.style.paddingLeft = value + "px";
 			img.style.paddingRight = value + "px";
+			grid.style.width = img.clientWidth + "px";
+			grid.style.height = img.clientHeight + "px";
 		}
 
 		var thin, bold, gridScale, gridColor;
