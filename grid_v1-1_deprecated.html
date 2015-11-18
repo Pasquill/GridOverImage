@@ -1,0 +1,252 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Grid</title>
+	<style>
+		body {
+			background-color: #269;
+		}
+		#version,
+		#version p,
+		#version a {
+			position: fixed;
+			left: 15px;
+			bottom: 15px;
+			color: #fff;
+			font-size: 15px;
+			line-height: 17px;
+		}
+		#version a { color: #ccc;}
+		#settings {
+			float: left;
+			width: auto;
+			height: 100%;
+			padding: 25px;
+			background-color: #269;
+			color: #FFF;
+		}
+		#dropArea {
+			width: 90%;
+			height: 50px;
+			margin-bottom: 15px;
+			background: #FFF;
+			border: 1px solid #878787;
+			color: #269;
+			font-size: 16px;
+			line-height: 50px;
+			text-align: center;
+			vertical-align: middle;
+		}
+		.readonly {
+			width: 35px;
+			color: #777;
+			text-align: center;
+		}
+
+
+		#container {
+			float: left;
+			width: auto;
+			height: auto;
+			position: relative;
+		}
+		img {
+			padding: 10px;
+		}
+		#grid {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+		}
+		#grid.light {
+			background-image: linear-gradient(white 2px, transparent 2px),
+			linear-gradient(90deg, white 2px, transparent 2px),
+			linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+		}
+		#grid.dark {
+			background-image: linear-gradient(black 2px, transparent 2px),
+			linear-gradient(90deg, black 2px, transparent 2px),
+			linear-gradient(rgba(0,0,0,.3) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0,0,0,.3) 1px, transparent 1px);
+			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+		}
+		#grid.gray {
+			background-image: linear-gradient(gray 2px, transparent 2px),
+			linear-gradient(90deg, gray 2px, transparent 2px),
+			linear-gradient(rgba(156,156,156,.3) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(156,156,156,.3) 1px, transparent 1px);
+			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
+			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+		}
+	</style>
+</head>
+<body>
+	<div id="version"><p>Grid v1.12</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
+	<div id="settings">
+		<form>
+			Img name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
+			Grid scale: 		<input type="range" name="gridScale" min="1" max="200">
+								<input type="text" name="textGridScale" class="readonly" placeholder="100" readonly><br><br>
+			Img scale, %: 		<input type="range" name="imgScale" min="1" max="200">
+								<input type="text" name="textImgScale" class="readonly" placeholder="100" readonly><br><br>
+			Grid & Img scale: 	<input type="range" name="gridImgScale" min="1" max="200">
+								<input type="text" name="textGridImgScale" class="readonly" placeholder="100" readonly><br><br>
+			Img indent: 		<input type="range" name="imgPos" min="0" max="200" value="10">
+								<input type="text" name="textImgPos" class="readonly" placeholder="10" readonly><br><br>
+			Grid color: 
+			<input type="radio" name="gridColor" id="chooseLight" value="light" checked>Light
+			<input type="radio" name="gridColor" id="chooseDark" value="dark">Dark
+			<input type="radio" name="gridColor" id="chooseGray" value="gray">Gray
+			<br><br>
+			<button>Default</button>
+		</form>
+	</div>
+
+	<div id="container">
+		<img src="1.jpg">
+		<div id="grid" class="light"></div>
+	</div>
+
+	<script>
+	window.onload = function() {
+		var form = document.getElementsByTagName("form")[0];
+		var filename = form.filename;
+		var gridScale = form.gridScale;
+		var textGridScale = form.textGridScale;
+		var imgScale = form.imgScale;
+		var textImgScale = form.textImgScale;
+		var gridImgScale = form.gridImgScale;
+		var textGridImgScale = form.textGridImgScale;
+		var imgPos = form.imgPos;
+		var textImgPos = form.textImgPos;
+		var chooseLight = document.getElementById("chooseLight");
+		var chooseDark = document.getElementById("chooseDark");
+		var chooseGray = document.getElementById("chooseGray");
+		var button = form.getElementsByTagName("button")[0];
+
+		var container = document.getElementById("container");
+		var img = document.getElementsByTagName("img")[0];
+		var grid = document.getElementById("grid");
+
+		/* DnD the image */
+		if(window.FileReader) {
+			// create drop area
+			var div = document.createElement("div");
+			div.setAttribute("id", "dropArea");
+			var txt = document.createTextNode(">> Drag the image here <<");
+			div.appendChild(txt);
+			document.getElementById("settings").insertBefore(div, form);
+			// remove "input file name manually" section
+			var counter = 0;
+			do { form.removeChild(form.firstChild); counter++; } while(counter < 4);
+			// disable defaults funtion
+			function cancel(e) {
+				var e = e || window.event;
+				e.preventDefault();
+				return false;
+			}
+			function processImage(e) {
+				var e = e || window.event;
+				e.stopPropagation();
+				e.preventDefault();
+				var dt = e.dataTransfer;
+				var file = dt.files[0];
+				
+				var reader = new FileReader();
+				reader.onloadend = function() {
+					div.innerHTML = file.name;
+					img.setAttribute("src", reader.result);
+				}
+				if(file) {
+					reader.readAsDataURL(file);
+				}
+				// set grid size the same as new img
+				imgScale.click();
+			}
+			div.addEventListener("dragenter", cancel, false);
+			div.addEventListener("dragover", cancel, false);
+			div.addEventListener("drop", processImage, false);
+		}
+		/* END - DnD the image */
+
+		function changeFileName() {
+			img.setAttribute("src", filename.value);
+		}
+
+		function changeGridScale() {
+			var scale = gridScale.value;
+			var scaleDiv5 = Math.floor(scale / 10);
+			scale = scaleDiv5 * 10;
+			textGridScale.value = scale;
+			grid.style.backgroundSize = scale + "px " + scale + "px, " + scale + "px " + scale + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px";
+		}
+
+		function changeImgScale() {
+			var scale = imgScale.value;
+			textImgScale.value = scale;
+			img.style.width = img.style.height = scale + "%";
+			grid.style.width = img.clientWidth + "px";
+			grid.style.height = img.clientHeight + "px";
+		}
+
+		function launchGridImgScale() {
+			var scale = gridImgScale.value;
+			textGridImgScale.value = scale;
+			gridScale.value = imgScale.value = textGridScale.value = textImgScale.value = scale;
+			changeGridScale();
+			changeImgScale();
+		}
+
+		function changeImgPos() {
+			var pad = imgPos.value;
+			textImgPos.value = pad;
+			img.style.paddingLeft = pad + "px";
+			img.style.paddingRight = pad + "px";
+			changeGridScale();
+			changeImgScale();
+		}
+
+		function setGridColor(e) {
+			var target = e && e.target || window.event.srcElement;
+ 			grid.className = target.value;
+		}
+
+		function setDefault() {
+			gridScale.value = 100;
+			imgScale.value = 100;
+			gridImgScale.value = 100;
+			chooseLight.checked = true;
+		}
+		// in case update page was run
+		setDefault();
+
+		filename.addEventListener("input", changeFileName);
+
+		gridScale.addEventListener("input", changeGridScale);
+		gridScale.addEventListener("change", changeGridScale);
+
+		imgScale.addEventListener("input", changeImgScale);
+		imgScale.addEventListener("change", changeImgScale);
+
+		gridImgScale.addEventListener("input", launchGridImgScale);
+		gridImgScale.addEventListener("change", launchGridImgScale);
+
+		imgPos.addEventListener("input", changeImgPos);
+		imgPos.addEventListener("change", changeImgPos);
+
+		chooseLight.addEventListener("click", setGridColor);
+		chooseDark.addEventListener("click", setGridColor);
+		chooseGray.addEventListener("click", setGridColor);
+
+		button.addEventListener("click", setDefault);
+	}
+	</script>
+</body>
+</html>
