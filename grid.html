@@ -61,78 +61,52 @@
 			top: 0;
 			left: 0;
 		}
-		#grid.light {
-			background-image: linear-gradient(white 2px, transparent 2px),
-			linear-gradient(90deg, white 2px, transparent 2px),
-			linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
-			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
-			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
-		}
-		#grid.dark {
-			background-image: linear-gradient(black 2px, transparent 2px),
-			linear-gradient(90deg, black 2px, transparent 2px),
-			linear-gradient(rgba(0,0,0,.3) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(0,0,0,.3) 1px, transparent 1px);
-			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
-			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
-		}
-		#grid.gray {
-			background-image: linear-gradient(gray 2px, transparent 2px),
-			linear-gradient(90deg, gray 2px, transparent 2px),
-			linear-gradient(rgba(156,156,156,.3) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(156,156,156,.3) 1px, transparent 1px);
-			background-size:100px 100px, 100px 100px, 10px 10px, 10px 10px, 10px 10px, 10px 10px;
-			background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
-		}
 	</style>
 </head>
 <body>
-	<div id="version"><p>Grid v1.12</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
+	<div id="version"><p>Grid v1.20</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
 	<div id="settings">
 		<form>
 			Img name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
-			Grid scale: 		<input type="range" name="gridScale" min="1" max="200">
-								<input type="text" name="textGridScale" class="readonly" placeholder="100" readonly><br><br>
-			Img scale, %: 		<input type="range" name="imgScale" min="1" max="200">
-								<input type="text" name="textImgScale" class="readonly" placeholder="100" readonly><br><br>
-			Grid & Img scale: 	<input type="range" name="gridImgScale" min="1" max="200">
-								<input type="text" name="textGridImgScale" class="readonly" placeholder="100" readonly><br><br>
-			Img indent: 		<input type="range" name="imgPos" min="0" max="200" value="10">
-								<input type="text" name="textImgPos" class="readonly" placeholder="10" readonly><br><br>
-			Grid color: 
-			<input type="radio" name="gridColor" id="chooseLight" value="light" checked>Light
-			<input type="radio" name="gridColor" id="chooseDark" value="dark">Dark
-			<input type="radio" name="gridColor" id="chooseGray" value="gray">Gray
+
+			Grid variant: 
+			<input type="checkbox" name="thin" checked>Thin
+			<input type="checkbox" name="bold" checked>Bold
 			<br><br>
-			<button>Default</button>
+
+			Grid scale: <input type="range" name="gridScale" value="100" min="1" max="200" step="1">
+			<input type="text" name="textGridScale" class="readonly" placeholder="100"><br><br>
+
+			Img scale, %: <input type="range" name="imgScale" min="1" max="200" step="1">
+			<input type="text" name="textImgScale" class="readonly" placeholder="100"><br><br>
+
+			Grid & Img scale: <input type="range" name="gridImgScale" min="1" max="200" step="1">
+			<input type="text" name="textGridImgScale" class="readonly" placeholder="100"><br><br>
+
+			Img indent: <input type="range" name="imgPos" min="0" max="200" value="10" step="1">
+			<input type="text" name="textImgPos" class="readonly" placeholder="10"><br><br>
+
+			Grid color: <input type="color" name="gridColor" value="rgba(0,0,0,.4)">
+			<br><br>
+
+			<button name="toDefault" id="toDefault">Default</button>
 		</form>
 	</div>
 
 	<div id="container">
-		<img src="1.jpg">
-		<div id="grid" class="light"></div>
+		<img id="img" src="1.jpg">
+		<div id="grid"></div>
 	</div>
 
 	<script>
 	window.onload = function() {
+
 		var form = document.getElementsByTagName("form")[0];
 		var filename = form.filename;
-		var gridScale = form.gridScale;
-		var textGridScale = form.textGridScale;
-		var imgScale = form.imgScale;
-		var textImgScale = form.textImgScale;
-		var gridImgScale = form.gridImgScale;
-		var textGridImgScale = form.textGridImgScale;
-		var imgPos = form.imgPos;
-		var textImgPos = form.textImgPos;
-		var chooseLight = document.getElementById("chooseLight");
-		var chooseDark = document.getElementById("chooseDark");
-		var chooseGray = document.getElementById("chooseGray");
-		var button = form.getElementsByTagName("button")[0];
+		var button = document.getElementById("toDefault");
 
 		var container = document.getElementById("container");
-		var img = document.getElementsByTagName("img")[0];
+		var img = document.getElementById("img");
 		var grid = document.getElementById("grid");
 
 		/* DnD the image */
@@ -168,84 +142,155 @@
 					reader.readAsDataURL(file);
 				}
 				// set grid size the same as new img
-				imgScale.click();
+				document.getElementById("toDefault").click();
 			}
 			div.addEventListener("dragenter", cancel, false);
 			div.addEventListener("dragover", cancel, false);
 			div.addEventListener("drop", processImage, false);
 		}
-		/* END - DnD the image */
+		/* /END - DnD the image */
 
+		/* Case DnD does not work in this browser */
 		function changeFileName() {
 			img.setAttribute("src", filename.value);
 		}
+		/* /END - Case DnD does not work in this browser */
 
-		function changeGridScale() {
-			var scale = gridScale.value;
-			var scaleDiv5 = Math.floor(scale / 10);
-			scale = scaleDiv5 * 10;
-			textGridScale.value = scale;
-			grid.style.backgroundSize = scale + "px " + scale + "px, " + scale + "px " + scale + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px, " + scaleDiv5 + "px " +  scaleDiv5 + "px, " + scaleDiv5 + "px " + scaleDiv5 + "px";
+		function changeModel(e) {
+			var target = e && e.target || window.event.srcElement;
+			switch(target.name) {
+				/* work with grid */
+				case "thin": 
+				case "bold": 
+					toggleThikness(target);
+					break;
+				case "gridScale": 
+				case "textGridScale": 
+					setGridScale(target);
+					break;
+				case "gridColor":
+					setGridColor(target.value);
+					break;
+				/* work with image */
+				case "imgScale":
+				case "textImgScale":
+					setImgScale(target);
+					break;
+				case "imgPos":
+				case "textImgPos":
+					setImgPos(target.value);
+					break;
+				/* work with both of them */
+				case "gridImgScale": 
+				case "textGridImgScale": 
+					setGridImgScale(target);
+					break;
+				/* default, sincerely John Madden */
+				default:
+					console.log("out of my competence \n\r" + target.name + " = " + target.value);
+					break;
+			}
 		}
 
-		function changeImgScale() {
-			var scale = imgScale.value;
-			textImgScale.value = scale;
-			img.style.width = img.style.height = scale + "%";
+		function toggleThikness(target) {
+			var prop = target.name;
+			var pattern = new RegExp("\\b"+prop+"\\b");
+			if(!grid.className.match(pattern)) { 
+				grid.className += " "+prop;
+				if(prop === "thin") { thin = 1; }
+				if(prop === "bold") { bold = 1; }
+			} else { 
+				grid.className = grid.className.replace(pattern, '');
+				if(prop === "thin") { thin = 0; }
+				if(prop === "bold") { bold = 0; }
+			}
+			setGrid(thin, bold, gridScale, gridColor);
+		}
+
+		function setGridScale(target) {
+			form.gridScale.value = form.textGridScale.value = target.value;
+			gridScale = target.value;
+			setGrid(thin, bold, gridScale, gridColor);
+		}
+		function setImgScale(target) {
+			form.imgScale.value = form.textImgScale.value = target.value;
+			img.style.width = img.style.height = target.value + "%";
 			grid.style.width = img.clientWidth + "px";
 			grid.style.height = img.clientHeight + "px";
 		}
-
-		function launchGridImgScale() {
-			var scale = gridImgScale.value;
-			textGridImgScale.value = scale;
-			gridScale.value = imgScale.value = textGridScale.value = textImgScale.value = scale;
-			changeGridScale();
-			changeImgScale();
+		function setGridImgScale(target) {
+			form.imgScale.value = form.textImgScale.value = form.gridScale.value = form.textGridScale.value = form.gridImgScale.value = form.textGridImgScale.value = target.value;
+			setGridScale(form.gridScale);
+			setImgScale(form.imgScale);
 		}
 
-		function changeImgPos() {
-			var pad = imgPos.value;
-			textImgPos.value = pad;
-			img.style.paddingLeft = pad + "px";
-			img.style.paddingRight = pad + "px";
-			changeGridScale();
-			changeImgScale();
+		function setGridColor(value) {
+			gridColor = "rgba(" + parseInt(value.substring(1,3),16) + "," + parseInt(value.substring(3,5),16) + "," + parseInt(value.substring(5,7),16) + ",.4)";
+			console.log(gridColor);
+			setGrid(thin, bold, gridScale, gridColor);
 		}
 
-		function setGridColor(e) {
-			var target = e && e.target || window.event.srcElement;
- 			grid.className = target.value;
+		function setGrid(thin, bold, gridScale, gridColor) {
+			/* background image */
+			var thinBI = "linear-gradient(" + gridColor + " 1px, transparent 1px), linear-gradient(90deg, " + gridColor + " 1px, transparent 1px)";
+			var boldBI = "linear-gradient(" + gridColor + " 2px, transparent 2px), linear-gradient(90deg, " + gridColor + " 2px, transparent 2px)";
+			/* background size */
+			var scale = Math.floor(gridScale / 10);
+			gridScale = scale * 10; 
+			var thinBS = scale + "px " + scale + "px, " + scale + "px " + scale + "px, " + scale + "px " + scale + "px, " + scale + "px " + scale + "px";
+			var boldBS = gridScale + "px " + gridScale + "px, " + gridScale + "px " + gridScale + "px";
+			/* background position */
+			var thinBP = "-1px -1px, -1px -1px, -1px -1px, -1px -1px";
+			var boldBP = "-2px -2px, -2px -2px";
+
+			grid.style.backgroundImage = "";
+			grid.style.backgroundSize = "";
+			grid.style.backgroundPosition = "";
+			if(thin === 1 && bold === 1) {
+				grid.style.backgroundImage = boldBI + ", " + thinBI;
+				grid.style.backgroundSize = boldBS + ", " + thinBS;
+				grid.style.backgroundPosition = boldBP + ", " + thinBP;
+			} else if(thin === 1) {
+				grid.style.backgroundImage = thinBI;
+				grid.style.backgroundSize = thinBS;
+				grid.style.backgroundPosition = thinBP;
+			} else if(bold === 1) {
+				grid.style.backgroundImage = boldBI;
+				grid.style.backgroundSize = boldBS;
+				grid.style.backgroundPosition = boldBP;
+			}
 		}
 
+		function setImgPos(value) {
+			form.imgPos.value = form.textImgPos.value = value;
+			img.style.paddingLeft = value + "px";
+			img.style.paddingRight = value + "px";
+		}
+
+		var thin, bold, gridScale, gridColor;
 		function setDefault() {
-			gridScale.value = 100;
-			imgScale.value = 100;
-			gridImgScale.value = 100;
-			chooseLight.checked = true;
+			thin = 1;
+			bold = 1;
+			gridScale = 100;
+			gridColor = "rgba(0,0,0,.4)";
+			form.gridColor.value = "#000000";
+			grid.className = "thin bold";
+			form.thin.checked = true;
+			form.bold.checked = true;
+			setGrid(thin, bold, gridScale, gridColor);
 		}
 		// in case update page was run
 		setDefault();
 
+
+		/* listeners */
 		filename.addEventListener("input", changeFileName);
 
-		gridScale.addEventListener("input", changeGridScale);
-		gridScale.addEventListener("change", changeGridScale);
-
-		imgScale.addEventListener("input", changeImgScale);
-		imgScale.addEventListener("change", changeImgScale);
-
-		gridImgScale.addEventListener("input", launchGridImgScale);
-		gridImgScale.addEventListener("change", launchGridImgScale);
-
-		imgPos.addEventListener("input", changeImgPos);
-		imgPos.addEventListener("change", changeImgPos);
-
-		chooseLight.addEventListener("click", setGridColor);
-		chooseDark.addEventListener("click", setGridColor);
-		chooseGray.addEventListener("click", setGridColor);
+		form.addEventListener("change", changeModel);
+		form.addEventListener("input", changeModel);
 
 		button.addEventListener("click", setDefault);
+
 	}
 	</script>
 </body>
