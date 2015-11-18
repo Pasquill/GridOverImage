@@ -2,11 +2,22 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Grid v1.1</title>
+	<title>Grid</title>
 	<style>
 		body {
 			background-color: #269;
 		}
+		#version,
+		#version p,
+		#version a {
+			position: fixed;
+			left: 15px;
+			bottom: 15px;
+			color: #fff;
+			font-size: 15px;
+			line-height: 17px;
+		}
+		#version a { color: #ccc;}
 		#settings {
 			float: left;
 			width: auto;
@@ -77,17 +88,18 @@
 	</style>
 </head>
 <body>
+	<div id="version"><p>Grid v1.11</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
 	<div id="settings">
 		<form>
 			Img name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
-			Grid scale: <input type="range" name="gridScale" value="100" min="10" max="200" step="5">
-			<input type="text" name="textGridScale" class="readonly" placeholder="100" readonly><br><br>
-			Img scale, %: <input type="range" name="imgScale" min="1" max="200">
-			<input type="text" name="textImgScale" class="readonly" placeholder="100" readonly><br><br>
-			Grid & Img scale: <input type="range" name="gridImgScale" min="1" max="200">
-			<input type="text" name="textGridImgScale" class="readonly" placeholder="100" readonly><br><br>
-			Img indent: <input type="range" name="imgPos" min="0" max="200" value="10">
-			<input type="text" name="textImgPos" class="readonly" placeholder="10" readonly><br><br>
+			Grid scale: 		<input type="range" name="gridScale" min="1" max="200">
+								<input type="text" name="textGridScale" class="readonly" placeholder="100" readonly><br><br>
+			Img scale, %: 		<input type="range" name="imgScale" min="1" max="200">
+								<input type="text" name="textImgScale" class="readonly" placeholder="100" readonly><br><br>
+			Grid & Img scale: 	<input type="range" name="gridImgScale" min="1" max="200">
+								<input type="text" name="textGridImgScale" class="readonly" placeholder="100" readonly><br><br>
+			Img indent: 		<input type="range" name="imgPos" min="0" max="200" value="10">
+								<input type="text" name="textImgPos" class="readonly" placeholder="10" readonly><br><br>
 			Grid color: 
 			<input type="radio" name="gridColor" id="chooseLight" value="light" checked>Light
 			<input type="radio" name="gridColor" id="chooseDark" value="dark">Dark
@@ -189,7 +201,7 @@
 			textGridImgScale.value = scale;
 			gridScale.value = imgScale.value = textGridScale.value = textImgScale.value = scale;
 			changeGridScale();
-			changeImgScale()
+			changeImgScale();
 		}
 
 		function changeImgPos() {
@@ -197,6 +209,8 @@
 			textImgPos.value = pad;
 			img.style.paddingLeft = pad + "px";
 			img.style.paddingRight = pad + "px";
+			changeGridScale();
+			changeImgScale();
 		}
 
 		function setGridColor(e) {
