@@ -88,7 +88,7 @@
 	</style>
 </head>
 <body>
-	<div id="version"><p>Grid v1.11</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
+	<div id="version"><p>Grid v1.12</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
 	<div id="settings">
 		<form>
 			Img name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
@@ -233,9 +233,12 @@
 		gridScale.addEventListener("change", changeGridScale);
 
 		imgScale.addEventListener("input", changeImgScale);
+		imgScale.addEventListener("change", changeImgScale);
 
+		gridImgScale.addEventListener("input", launchGridImgScale);
 		gridImgScale.addEventListener("change", launchGridImgScale);
 
+		imgPos.addEventListener("input", changeImgPos);
 		imgPos.addEventListener("change", changeImgPos);
 
 		chooseLight.addEventListener("click", setGridColor);
