@@ -142,7 +142,8 @@
 					reader.readAsDataURL(file);
 				}
 				// set grid size the same as new img
-				document.getElementById("toDefault").click();
+				//document.getElementById("toDefault").click();
+				setGridScale(form.gridScale);
 			}
 			div.addEventListener("dragenter", cancel, false);
 			div.addEventListener("dragover", cancel, false);
