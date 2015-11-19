@@ -64,7 +64,7 @@
 	</style>
 </head>
 <body>
-	<div id="version"><p>Grid v1.23</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
+	<div id="version"><p>Grid v1.24</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
 	<div id="settings">
 		<form action="" method="POST">
 			Img name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
@@ -142,8 +142,7 @@
 					reader.readAsDataURL(file);
 				}
 				// set grid size the same as new img
-				form.imgScale.click();
-
+				form.textImgScale.value = parseInt(form.textImgScale.value);
 			}
 			div.addEventListener("dragenter", cancel, false);
 			div.addEventListener("dragover", cancel, false);
@@ -156,6 +155,22 @@
 			img.setAttribute("src", filename.value);
 		}
 		/* /END - Case DnD does not work in this browser */
+
+		var thin, bold, gridScale, gridColor;
+		function setDefault() {
+			thin = 1;
+			bold = 1;
+			gridScale = 100;
+			gridColor = "rgba(0,0,0,.4)";
+			form.gridColor.value = "#000000";
+			grid.className = "thin bold";
+			form.thin.checked = true;
+			form.bold.checked = true;
+			setGrid(thin, bold, gridScale, gridColor);
+			console.log(img.clientWidth);
+		}
+		// in case update page was run
+		setDefault();
 
 		function changeModel(e) {
 			var target = e && e.target || window.event.srcElement;
@@ -268,21 +283,6 @@
 			grid.style.width = img.clientWidth + "px";
 			grid.style.height = img.clientHeight + "px";
 		}
-
-		var thin, bold, gridScale, gridColor;
-		function setDefault() {
-			thin = 1;
-			bold = 1;
-			gridScale = 100;
-			gridColor = "rgba(0,0,0,.4)";
-			form.gridColor.value = "#000000";
-			grid.className = "thin bold";
-			form.thin.checked = true;
-			form.bold.checked = true;
-			setGrid(thin, bold, gridScale, gridColor);
-		}
-		// in case update page was run
-		setDefault();
 
 
 		/* listeners */
