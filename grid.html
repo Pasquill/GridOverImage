@@ -64,7 +64,7 @@
 	</style>
 </head>
 <body>
-	<div id="version"><p>Grid v1.24</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
+	<div id="version"><p>Grid v1.25</p><p><a href="https://github.com/Pasquill/GridOverImage" target="_blank">Check for updates</a></p></div>
 	<div id="settings">
 		<form action="" method="POST">
 			Img name with extension: <input type="text" name="filename" placeholder="Image name"><br><br>
@@ -144,9 +144,16 @@
 				// set grid size the same as new img
 				form.textImgScale.value = parseInt(form.textImgScale.value);
 			}
-			div.addEventListener("dragenter", cancel, false);
-			div.addEventListener("dragover", cancel, false);
-			div.addEventListener("drop", processImage, false);
+			// events 
+			if(div.addEventListener) {
+				div.addEventListener("dragenter", cancel, false);
+				div.addEventListener("dragover", cancel, false);
+				div.addEventListener("drop", processImage, false);
+			} else {
+				div.attachEvent("dragenter", cancel);
+				div.attachEvent("dragover", cancel);
+				div.attachEvent("drop", processImage);
+			}
 		}
 		/* /END - DnD the image */
 
@@ -286,12 +293,17 @@
 
 
 		/* listeners */
-		filename.addEventListener("input", changeFileName);
-
-		form.addEventListener("change", changeModel);
-		form.addEventListener("input", changeModel);
-
-		button.addEventListener("click", setDefault);
+		if(div.addEventListener) {
+			filename.addEventListener("input", changeFileName);
+			form.addEventListener("change", changeModel);
+			form.addEventListener("input", changeModel);
+			button.addEventListener("click", setDefault);
+		} else {
+			filename.attachEvent("input", changeFileName);
+			form.attachEvent("change", changeModel);
+			form.attachEvent("input", changeModel);
+			button.attachEvent("click", setDefault);
+		}
 
 	}
 	</script>
